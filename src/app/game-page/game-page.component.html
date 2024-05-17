@@ -1,0 +1,2 @@
+<app-grid [diceValue]="diceValue" [buttonActions]="buttonActions" (playerOnMoveSender)="receiveIfPlayerOnMoveOrNot($event)"></app-grid>
+<app-dice [playerOnMove]="playerOnMove" (sendDiceValue)="receiveDiceValue($event)" (buttonActions)="receiveButtonActions($event)"></app-dice>

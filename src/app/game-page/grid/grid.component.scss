@@ -1,0 +1,33 @@
+.game {
+    height: 80vh;
+    color: white;
+    background-color: black;
+}
+
+.halt-button {
+    display: flex;
+    justify-content: end;
+    height: 5vh;
+}
+
+.grid {
+    height: 75vh;
+}
+
+.row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.cell {
+    height: 12vh;
+    width: 9.9vw;
+    border: 1px solid white;
+}
+
+.content-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

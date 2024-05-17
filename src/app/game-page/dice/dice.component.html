@@ -1,0 +1,34 @@
+<div class="dice">
+    @if(!gameStarted) {
+    <div class="game-not-started">
+        <div>
+            <span class="blink-text" (click)="beginGame()">Begin!</span>
+        </div>
+        <div>
+            <span (click)="backToHome()">Back to Home!</span>
+        </div>
+    </div>
+    } @else {
+    <div class="game-started">
+        @if(isDiceRolled) {
+        <div>
+            Dice rolled with value {{diceValue}}!
+        </div>
+        } @else {
+        @if(playerOnMove) {
+        <div>
+            Player is moving...
+        </div>
+        } @else {
+        <div>
+            <button (click)="rollDice()">Roll Dice!</button>
+            :{{diceValue}}
+        </div>
+        <div>
+            <span (click)="restartGame()">Restart!</span>
+        </div>
+        }
+        }
+    </div>
+    }
+</div>

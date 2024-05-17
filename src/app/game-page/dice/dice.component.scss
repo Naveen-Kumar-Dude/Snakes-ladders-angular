@@ -1,0 +1,13 @@
+.dice {
+    height: 20vh;
+    background-color: lightgreen;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-started, .game-not-started {
+    width: -webkit-fill-available;
+    display: flex;
+    justify-content: space-around;
+}

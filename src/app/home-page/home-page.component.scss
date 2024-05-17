@@ -1,0 +1,140 @@
+.home-page {
+    height: 100vh;
+    width: 100vw;
+    background-color: black;
+}
+
+.main-section {
+    height: 95vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .to-game-btn {
+        font-size: x-large;
+        cursor: pointer;
+    }
+}
+
+.credit-section {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    color: white;
+}
+
+.game-tittle {
+    color: white;
+    font-size: 3rem;
+    margin-bottom: 2rem;
+}
+
+.tittle-logo-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.pointer-cursor {
+  cursor: pointer;
+}
+
+
+.circle {
+    width: 60vmin;
+    height: 60vmin;
+    border-radius: 50%;
+  
+    --border-size: 3px;
+    --border-angle: 0turn;
+  
+    --grid-bg: radial-gradient(
+      transparent 69%,
+      limegreen 69%,
+      limegreen 70%,
+      transparent 70%
+    );
+    --line-bg: transparent 50%, limegreen 50%, transparent 50.5%;
+  
+    background-image: conic-gradient(
+        from var(--border-angle),
+        transparent 10%,
+        #0d0a 99%,
+        limegreen 99.5%
+      ),
+      linear-gradient(0deg, var(--line-bg)),
+      linear-gradient(45deg, var(--line-bg)),
+      linear-gradient(90deg, var(--line-bg)),
+      linear-gradient(135deg, var(--line-bg)), var(--grid-bg), var(--grid-bg),
+      var(--grid-bg);
+    background-size: cover, cover, cover, cover, cover, 25% 25%, 50% 50%, 75% 75%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border: solid 0.5vmin limegreen;
+  
+    animation: bg-spin 3s linear infinite;
+    @keyframes bg-spin {
+      to {
+        --border-angle: 1turn;
+      }
+    }
+  
+    position: relative;
+  
+    // Radial
+    &::after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 30%;
+      left: 30%;
+      width: 2vmin;
+      height: 2vmin;
+      background: limegreen;
+      border-radius: 50%;
+      animation: move 18s steps(6) infinite;
+      @keyframes move {
+        33% {
+          transform: translate(25vmin, 10vmin);
+        }
+        66% {
+          transform: translate(15vmin, 30vmin);
+        }
+        100% {
+          transform: translate(0vmin, 0vmin);
+        }
+      }
+    }
+  
+    // Radial
+    &::before {
+      content: "";
+      display: block;
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: solid 1vmin limegreen;
+      animation: scale 3s linear infinite;
+      @keyframes scale {
+        from {
+          transform: scale(0);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+        51%,
+        100% {
+          opacity: 0;
+        }
+      }
+    }
+  
+    filter: drop-shadow(0px 0px 10vmin black) blur(0.5px) contrast(200%);
+  }
+  
+  @property --border-angle {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0turn;
+  }

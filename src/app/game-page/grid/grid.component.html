@@ -1,0 +1,20 @@
+<div class="game">
+    <div class="halt-button">{{diceValue}}</div>
+    <div class="grid">
+        @for (row of matrix; track row) {
+        <div class="row">
+            @for (cell of row; track cell.label) {
+            <span class="cell">{{ cell.label + cell.nature?.type }}
+                @if(cell?.player) {
+                    <span class="blink-text content-center">&#x25C9;</span>
+                }
+            </span>
+            }
+        </div>
+        <!-- <br> -->
+        } @empty {
+            Game Failed to load,Please refresh the page!
+        }
+    </div>
+</div>
+
