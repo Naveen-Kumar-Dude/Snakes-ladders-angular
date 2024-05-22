@@ -8,7 +8,7 @@ import {
   isPlatformServer,
   parseCookieValue,
   setRootDomAdapter
-} from "./chunk-GHI5UUOM.js";
+} from "./chunk-AF2DBQWG.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   APP_ID,
@@ -84,7 +84,7 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-4TZND4QJ.js";
+} from "./chunk-BNOYPYPL.js";
 
 // node_modules/@angular/common/fesm2022/http.mjs
 var HttpHandler = class {
@@ -700,7 +700,7 @@ var HttpRequest = class _HttpRequest {
     if (this.body === null) {
       return null;
     }
-    if (isArrayBuffer(this.body) || isBlob(this.body) || isFormData(this.body) || isUrlSearchParams(this.body) || typeof this.body === "string") {
+    if (typeof this.body === "string" || isArrayBuffer(this.body) || isBlob(this.body) || isFormData(this.body) || isUrlSearchParams(this.body)) {
       return this.body;
     }
     if (this.body instanceof HttpParams) {
@@ -745,9 +745,10 @@ var HttpRequest = class _HttpRequest {
     const method = update.method || this.method;
     const url = update.url || this.url;
     const responseType = update.responseType || this.responseType;
+    const transferCache = update.transferCache ?? this.transferCache;
     const body = update.body !== void 0 ? update.body : this.body;
-    const withCredentials = update.withCredentials !== void 0 ? update.withCredentials : this.withCredentials;
-    const reportProgress = update.reportProgress !== void 0 ? update.reportProgress : this.reportProgress;
+    const withCredentials = update.withCredentials ?? this.withCredentials;
+    const reportProgress = update.reportProgress ?? this.reportProgress;
     let headers = update.headers || this.headers;
     let params = update.params || this.params;
     const context = update.context ?? this.context;
@@ -763,7 +764,8 @@ var HttpRequest = class _HttpRequest {
       context,
       reportProgress,
       responseType,
-      withCredentials
+      withCredentials,
+      transferCache
     });
   }
 };
@@ -2136,8 +2138,9 @@ function transferCacheInterceptorFn(req, next) {
       url
     }));
   }
+  const isServer = isPlatformServer(inject(PLATFORM_ID));
   return next(req).pipe(tap((event) => {
-    if (event instanceof HttpResponse) {
+    if (event instanceof HttpResponse && isServer) {
       transferState.set(storeKey, {
         [BODY]: event.body,
         [HEADERS]: getFilteredHeaders(event.headers, headersToInclude),
@@ -2162,6 +2165,9 @@ function getFilteredHeaders(headers, includeHeaders) {
   }
   return headersMap;
 }
+function sortAndConcatParams(params) {
+  return [...params.keys()].sort().map((k) => `${k}=${params.getAll(k)}`).join("&");
+}
 function makeCacheKey(request) {
   const {
     params,
@@ -2169,8 +2175,14 @@ function makeCacheKey(request) {
     responseType,
     url
   } = request;
-  const encodedParams = params.keys().sort().map((k) => `${k}=${params.getAll(k)}`).join("&");
-  const key = method + "." + responseType + "." + url + "?" + encodedParams;
+  const encodedParams = sortAndConcatParams(params);
+  let serializedBody = request.serializeBody();
+  if (serializedBody instanceof URLSearchParams) {
+    serializedBody = sortAndConcatParams(serializedBody);
+  } else if (typeof serializedBody !== "string") {
+    serializedBody = "";
+  }
+  const key = [method, responseType, url, serializedBody, encodedParams].join("|");
   const hash = generateHash(key);
   return makeStateKey(hash);
 }
@@ -4002,7 +4014,7 @@ function provideClientHydration(...features) {
   }
   return makeEnvironmentProviders([typeof ngDevMode !== "undefined" && ngDevMode ? provideZoneJsCompatibilityDetector() : [], withDomHydration(), featuresKind.has(HydrationFeatureKind.NoHttpTransferCache) || hasHttpTransferCacheOptions ? [] : withHttpTransferCache({}), providers]);
 }
-var VERSION = new Version("17.1.2");
+var VERSION = new Version("17.3.9");
 var makeStateKey2 = makeStateKey;
 var TransferState2 = TransferState;
 
@@ -4048,16 +4060,16 @@ export {
 
 @angular/common/fesm2022/http.mjs:
   (**
-   * @license Angular v17.1.2
-   * (c) 2010-2022 Google LLC. https://angular.io/
+   * @license Angular v17.3.9
+   * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)
 
 @angular/platform-browser/fesm2022/platform-browser.mjs:
   (**
-   * @license Angular v17.1.2
-   * (c) 2010-2022 Google LLC. https://angular.io/
+   * @license Angular v17.3.9
+   * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-ZYCB3AU2.js.map
+//# sourceMappingURL=chunk-5LGW5DQT.js.map

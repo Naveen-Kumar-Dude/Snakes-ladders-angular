@@ -57,7 +57,7 @@ import {
   ɵɵinject,
   ɵɵinjectAttribute,
   ɵɵstyleProp
-} from "./chunk-4TZND4QJ.js";
+} from "./chunk-BNOYPYPL.js";
 
 // node_modules/@angular/common/fesm2022/common.mjs
 var _DOM = null;
@@ -69,6 +69,26 @@ function setRootDomAdapter(adapter) {
 }
 var DomAdapter = class {
 };
+var _PlatformNavigation = class _PlatformNavigation {
+};
+_PlatformNavigation.ɵfac = function PlatformNavigation_Factory(t) {
+  return new (t || _PlatformNavigation)();
+};
+_PlatformNavigation.ɵprov = ɵɵdefineInjectable({
+  token: _PlatformNavigation,
+  factory: () => (() => window.navigation)(),
+  providedIn: "platform"
+});
+var PlatformNavigation = _PlatformNavigation;
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PlatformNavigation, [{
+    type: Injectable,
+    args: [{
+      providedIn: "platform",
+      useFactory: () => window.navigation
+    }]
+  }], null, null);
+})();
 var DOCUMENT = new InjectionToken(ngDevMode ? "DocumentToken" : "");
 var _PlatformLocation = class _PlatformLocation {
   historyGo(relativePosition) {
@@ -788,23 +808,80 @@ var FormatWidth;
   FormatWidth2[FormatWidth2["Long"] = 2] = "Long";
   FormatWidth2[FormatWidth2["Full"] = 3] = "Full";
 })(FormatWidth || (FormatWidth = {}));
-var NumberSymbol;
-(function(NumberSymbol2) {
-  NumberSymbol2[NumberSymbol2["Decimal"] = 0] = "Decimal";
-  NumberSymbol2[NumberSymbol2["Group"] = 1] = "Group";
-  NumberSymbol2[NumberSymbol2["List"] = 2] = "List";
-  NumberSymbol2[NumberSymbol2["PercentSign"] = 3] = "PercentSign";
-  NumberSymbol2[NumberSymbol2["PlusSign"] = 4] = "PlusSign";
-  NumberSymbol2[NumberSymbol2["MinusSign"] = 5] = "MinusSign";
-  NumberSymbol2[NumberSymbol2["Exponential"] = 6] = "Exponential";
-  NumberSymbol2[NumberSymbol2["SuperscriptingExponent"] = 7] = "SuperscriptingExponent";
-  NumberSymbol2[NumberSymbol2["PerMille"] = 8] = "PerMille";
-  NumberSymbol2[NumberSymbol2["Infinity"] = 9] = "Infinity";
-  NumberSymbol2[NumberSymbol2["NaN"] = 10] = "NaN";
-  NumberSymbol2[NumberSymbol2["TimeSeparator"] = 11] = "TimeSeparator";
-  NumberSymbol2[NumberSymbol2["CurrencyDecimal"] = 12] = "CurrencyDecimal";
-  NumberSymbol2[NumberSymbol2["CurrencyGroup"] = 13] = "CurrencyGroup";
-})(NumberSymbol || (NumberSymbol = {}));
+var NumberSymbol = {
+  /**
+   * Decimal separator.
+   * For `en-US`, the dot character.
+   * Example: 2,345`.`67
+   */
+  Decimal: 0,
+  /**
+   * Grouping separator, typically for thousands.
+   * For `en-US`, the comma character.
+   * Example: 2`,`345.67
+   */
+  Group: 1,
+  /**
+   * List-item separator.
+   * Example: "one, two, and three"
+   */
+  List: 2,
+  /**
+   * Sign for percentage (out of 100).
+   * Example: 23.4%
+   */
+  PercentSign: 3,
+  /**
+   * Sign for positive numbers.
+   * Example: +23
+   */
+  PlusSign: 4,
+  /**
+   * Sign for negative numbers.
+   * Example: -23
+   */
+  MinusSign: 5,
+  /**
+   * Computer notation for exponential value (n times a power of 10).
+   * Example: 1.2E3
+   */
+  Exponential: 6,
+  /**
+   * Human-readable format of exponential.
+   * Example: 1.2x103
+   */
+  SuperscriptingExponent: 7,
+  /**
+   * Sign for permille (out of 1000).
+   * Example: 23.4‰
+   */
+  PerMille: 8,
+  /**
+   * Infinity, can be used with plus and minus.
+   * Example: ∞, +∞, -∞
+   */
+  Infinity: 9,
+  /**
+   * Not a number.
+   * Example: NaN
+   */
+  NaN: 10,
+  /**
+   * Symbol used between time units.
+   * Example: 10:52
+   */
+  TimeSeparator: 11,
+  /**
+   * Decimal separator for currency values (fallback to `Decimal`).
+   * Example: $2,345.67
+   */
+  CurrencyDecimal: 12,
+  /**
+   * Group separator for currency values (fallback to `Group`).
+   * Example: $2,345.67
+   */
+  CurrencyGroup: 13
+};
 var WeekDay;
 (function(WeekDay2) {
   WeekDay2[WeekDay2["Sunday"] = 0] = "Sunday";
@@ -2904,6 +2981,7 @@ var _subscribableStrategy = new SubscribableStrategy();
 var _AsyncPipe = class _AsyncPipe {
   constructor(ref) {
     this._latestValue = null;
+    this.markForCheckOnValueUpdate = true;
     this._subscription = null;
     this._obj = null;
     this._strategy = null;
@@ -2918,7 +2996,12 @@ var _AsyncPipe = class _AsyncPipe {
   transform(obj) {
     if (!this._obj) {
       if (obj) {
-        this._subscribe(obj);
+        try {
+          this.markForCheckOnValueUpdate = false;
+          this._subscribe(obj);
+        } finally {
+          this.markForCheckOnValueUpdate = true;
+        }
       }
       return this._latestValue;
     }
@@ -2951,7 +3034,9 @@ var _AsyncPipe = class _AsyncPipe {
   _updateLatestValue(async, value) {
     if (async === this._obj) {
       this._latestValue = value;
-      this._ref.markForCheck();
+      if (this.markForCheckOnValueUpdate) {
+        this._ref?.markForCheck();
+      }
     }
   }
 };
@@ -3593,7 +3678,7 @@ function isPlatformBrowser(platformId) {
 function isPlatformServer(platformId) {
   return platformId === PLATFORM_SERVER_ID;
 }
-var VERSION = new Version("17.1.2");
+var VERSION = new Version("17.3.9");
 var _ViewportScroller = class _ViewportScroller {
 };
 _ViewportScroller.ɵprov = ɵɵdefineInjectable({
@@ -3724,6 +3809,7 @@ var NullViewportScroller = class {
 };
 var XhrFactory = class {
 };
+var PLACEHOLDER_QUALITY = "20";
 function getUrl(src, win) {
   return isAbsoluteUrl(src) ? new URL(src) : new URL(src, win.location.href);
 }
@@ -3789,6 +3875,9 @@ function createCloudflareUrl(path, config) {
   if (config.width) {
     params += `,width=${config.width}`;
   }
+  if (config.isPlaceholder) {
+    params += `,quality=${PLACEHOLDER_QUALITY}`;
+  }
   return `${path}/cdn-cgi/image/${params}/${config.src}`;
 }
 var cloudinaryLoaderInfo = {
@@ -3801,7 +3890,8 @@ function isCloudinaryUrl(url) {
 }
 var provideCloudinaryLoader = createImageLoader(createCloudinaryUrl, ngDevMode ? ["https://res.cloudinary.com/mysite", "https://mysite.cloudinary.com", "https://subdomain.mysite.com"] : void 0);
 function createCloudinaryUrl(path, config) {
-  let params = `f_auto,q_auto`;
+  const quality = config.isPlaceholder ? "q_auto:low" : "q_auto";
+  let params = `f_auto,${quality}`;
   if (config.width) {
     params += `,w_${config.width}`;
   }
@@ -3821,14 +3911,16 @@ function createImagekitUrl(path, config) {
     src,
     width
   } = config;
-  let urlSegments;
+  const params = [];
   if (width) {
-    const params = `tr:w-${width}`;
-    urlSegments = [path, params, src];
-  } else {
-    urlSegments = [path, src];
+    params.push(`w-${width}`);
   }
-  return urlSegments.join("/");
+  if (config.isPlaceholder) {
+    params.push(`q-${PLACEHOLDER_QUALITY}`);
+  }
+  const urlSegments = params.length ? [path, `tr:${params.join(",")}`, src] : [path, src];
+  const url = new URL(urlSegments.join("/"));
+  return url.href;
 }
 var imgixLoaderInfo = {
   name: "Imgix",
@@ -3845,7 +3937,18 @@ function createImgixUrl(path, config) {
   if (config.width) {
     url.searchParams.set("w", config.width.toString());
   }
+  if (config.isPlaceholder) {
+    url.searchParams.set("q", PLACEHOLDER_QUALITY);
+  }
   return url.href;
+}
+var netlifyLoaderInfo = {
+  name: "Netlify",
+  testUrl: isNetlifyUrl
+};
+var NETLIFY_LOADER_REGEX = /https?\:\/\/[^\/]+\.netlify\.app\/.+/;
+function isNetlifyUrl(url) {
+  return NETLIFY_LOADER_REGEX.test(url);
 }
 function imgDirectiveDetails(ngSrc, includeNgSrc = true) {
   const ngSrcInfo = includeNgSrc ? `(activated on an <img> element with the \`ngSrc="${ngSrc}"\`) ` : "";
@@ -4121,7 +4224,10 @@ var ASPECT_RATIO_TOLERANCE = 0.1;
 var OVERSIZED_IMAGE_TOLERANCE = 1e3;
 var FIXED_SRCSET_WIDTH_LIMIT = 1920;
 var FIXED_SRCSET_HEIGHT_LIMIT = 1080;
-var BUILT_IN_LOADERS = [imgixLoaderInfo, imageKitLoaderInfo, cloudinaryLoaderInfo];
+var PLACEHOLDER_BLUR_AMOUNT = 15;
+var DATA_URL_WARN_LIMIT = 4e3;
+var DATA_URL_ERROR_LIMIT = 1e4;
+var BUILT_IN_LOADERS = [imgixLoaderInfo, imageKitLoaderInfo, cloudinaryLoaderInfo, netlifyLoaderInfo];
 var _NgOptimizedImage = class _NgOptimizedImage {
   constructor() {
     this.imageLoader = inject(IMAGE_LOADER);
@@ -4167,6 +4273,7 @@ var _NgOptimizedImage = class _NgOptimizedImage {
       if (!this.ngSrcset) {
         assertNoComplexSizes(this);
       }
+      assertValidPlaceholder(this, this.imageLoader);
       assertNotMissingBuiltInLoader(this.ngSrc, this.imageLoader);
       assertNoNgSrcsetWithoutLoader(this, this.imageLoader);
       assertNoLoaderParamsWithoutLoader(this, this.imageLoader);
@@ -4180,6 +4287,9 @@ var _NgOptimizedImage = class _NgOptimizedImage {
         const checker = this.injector.get(PreconnectLinkChecker);
         checker.assertPreconnect(this.getRewrittenSrc(), this.ngSrc);
       }
+    }
+    if (this.placeholder) {
+      this.removePlaceholderOnLoad(this.imgElement);
     }
     this.setHostAttributes();
   }
@@ -4307,6 +4417,47 @@ var _NgOptimizedImage = class _NgOptimizedImage {
     }
     return !this.disableOptimizedSrcset && !this.srcset && this.imageLoader !== noopImageLoader && !oversizedImage;
   }
+  /**
+   * Returns an image url formatted for use with the CSS background-image property. Expects one of:
+   * * A base64 encoded image, which is wrapped and passed through.
+   * * A boolean. If true, calls the image loader to generate a small placeholder url.
+   */
+  generatePlaceholder(placeholderInput) {
+    const {
+      placeholderResolution
+    } = this.config;
+    if (placeholderInput === true) {
+      return `url(${this.callImageLoader({
+        src: this.ngSrc,
+        width: placeholderResolution,
+        isPlaceholder: true
+      })})`;
+    } else if (typeof placeholderInput === "string" && placeholderInput.startsWith("data:")) {
+      return `url(${placeholderInput})`;
+    }
+    return null;
+  }
+  /**
+   * Determines if blur should be applied, based on an optional boolean
+   * property `blur` within the optional configuration object `placeholderConfig`.
+   */
+  shouldBlurPlaceholder(placeholderConfig) {
+    if (!placeholderConfig || !placeholderConfig.hasOwnProperty("blur")) {
+      return true;
+    }
+    return Boolean(placeholderConfig.blur);
+  }
+  removePlaceholderOnLoad(img) {
+    const callback = () => {
+      const changeDetectorRef = this.injector.get(ChangeDetectorRef);
+      removeLoadListenerFn();
+      removeErrorListenerFn();
+      this.placeholder = false;
+      changeDetectorRef.markForCheck();
+    };
+    const removeLoadListenerFn = this.renderer.listen(img, "load", callback);
+    const removeErrorListenerFn = this.renderer.listen(img, "error", callback);
+  }
   /** @nodoc */
   ngOnDestroy() {
     if (ngDevMode) {
@@ -4325,10 +4476,10 @@ _NgOptimizedImage.ɵfac = function NgOptimizedImage_Factory(t) {
 _NgOptimizedImage.ɵdir = ɵɵdefineDirective({
   type: _NgOptimizedImage,
   selectors: [["img", "ngSrc", ""]],
-  hostVars: 8,
+  hostVars: 18,
   hostBindings: function NgOptimizedImage_HostBindings(rf, ctx) {
     if (rf & 2) {
-      ɵɵstyleProp("position", ctx.fill ? "absolute" : null)("width", ctx.fill ? "100%" : null)("height", ctx.fill ? "100%" : null)("inset", ctx.fill ? "0px" : null);
+      ɵɵstyleProp("position", ctx.fill ? "absolute" : null)("width", ctx.fill ? "100%" : null)("height", ctx.fill ? "100%" : null)("inset", ctx.fill ? "0" : null)("background-size", ctx.placeholder ? "cover" : null)("background-position", ctx.placeholder ? "50% 50%" : null)("background-repeat", ctx.placeholder ? "no-repeat" : null)("background-image", ctx.placeholder ? ctx.generatePlaceholder(ctx.placeholder) : null)("filter", ctx.placeholder && ctx.shouldBlurPlaceholder(ctx.placeholderConfig) ? "blur(15px)" : null);
     }
   },
   inputs: {
@@ -4342,6 +4493,8 @@ _NgOptimizedImage.ɵdir = ɵɵdefineDirective({
     loaderParams: "loaderParams",
     disableOptimizedSrcset: [InputFlags.HasDecoratorInputTransform, "disableOptimizedSrcset", "disableOptimizedSrcset", booleanAttribute],
     fill: [InputFlags.HasDecoratorInputTransform, "fill", "fill", booleanAttribute],
+    placeholder: [InputFlags.HasDecoratorInputTransform, "placeholder", "placeholder", booleanOrDataUrlAttribute],
+    placeholderConfig: "placeholderConfig",
     src: "src",
     srcset: "srcset"
   },
@@ -4359,7 +4512,12 @@ var NgOptimizedImage = _NgOptimizedImage;
         "[style.position]": 'fill ? "absolute" : null',
         "[style.width]": 'fill ? "100%" : null',
         "[style.height]": 'fill ? "100%" : null',
-        "[style.inset]": 'fill ? "0px" : null'
+        "[style.inset]": 'fill ? "0" : null',
+        "[style.background-size]": 'placeholder ? "cover" : null',
+        "[style.background-position]": 'placeholder ? "50% 50%" : null',
+        "[style.background-repeat]": 'placeholder ? "no-repeat" : null',
+        "[style.background-image]": "placeholder ? generatePlaceholder(placeholder) : null",
+        "[style.filter]": `placeholder && shouldBlurPlaceholder(placeholderConfig) ? "blur(${PLACEHOLDER_BLUR_AMOUNT}px)" : null`
       }
     }]
   }], null, {
@@ -4412,6 +4570,15 @@ var NgOptimizedImage = _NgOptimizedImage;
         transform: booleanAttribute
       }]
     }],
+    placeholder: [{
+      type: Input,
+      args: [{
+        transform: booleanOrDataUrlAttribute
+      }]
+    }],
+    placeholderConfig: [{
+      type: Input
+    }],
     src: [{
       type: Input
     }],
@@ -4450,6 +4617,31 @@ function assertNoComplexSizes(dir) {
   let sizes = dir.sizes;
   if (sizes?.match(/((\)|,)\s|^)\d+px/)) {
     throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc, false)} \`sizes\` was set to a string including pixel values. For automatic \`srcset\` generation, \`sizes\` must only include responsive values, such as \`sizes="50vw"\` or \`sizes="(min-width: 768px) 50vw, 100vw"\`. To fix this, modify the \`sizes\` attribute, or provide your own \`ngSrcset\` value directly.`);
+  }
+}
+function assertValidPlaceholder(dir, imageLoader) {
+  assertNoPlaceholderConfigWithoutPlaceholder(dir);
+  assertNoRelativePlaceholderWithoutLoader(dir, imageLoader);
+  assertNoOversizedDataUrl(dir);
+}
+function assertNoPlaceholderConfigWithoutPlaceholder(dir) {
+  if (dir.placeholderConfig && !dir.placeholder) {
+    throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc, false)} \`placeholderConfig\` options were provided for an image that does not use the \`placeholder\` attribute, and will have no effect.`);
+  }
+}
+function assertNoRelativePlaceholderWithoutLoader(dir, imageLoader) {
+  if (dir.placeholder === true && imageLoader === noopImageLoader) {
+    throw new RuntimeError(2963, `${imgDirectiveDetails(dir.ngSrc)} the \`placeholder\` attribute is set to true but no image loader is configured (i.e. the default one is being used), which would result in the same image being used for the primary image and its placeholder. To fix this, provide a loader or remove the \`placeholder\` attribute from the image.`);
+  }
+}
+function assertNoOversizedDataUrl(dir) {
+  if (dir.placeholder && typeof dir.placeholder === "string" && dir.placeholder.startsWith("data:")) {
+    if (dir.placeholder.length > DATA_URL_ERROR_LIMIT) {
+      throw new RuntimeError(2965, `${imgDirectiveDetails(dir.ngSrc)} the \`placeholder\` attribute is set to a data URL which is longer than ${DATA_URL_ERROR_LIMIT} characters. This is strongly discouraged, as large inline placeholders directly increase the bundle size of Angular and hurt page load performance. To fix this, generate a smaller data URL placeholder.`);
+    }
+    if (dir.placeholder.length > DATA_URL_WARN_LIMIT) {
+      console.warn(formatRuntimeError(2965, `${imgDirectiveDetails(dir.ngSrc)} the \`placeholder\` attribute is set to a data URL which is longer than ${DATA_URL_WARN_LIMIT} characters. This is discouraged, as large inline placeholders directly increase the bundle size of Angular and hurt page load performance. For better loading performance, generate a smaller data URL placeholder.`));
+    }
   }
 }
 function assertNotBlobUrl(dir) {
@@ -4641,6 +4833,12 @@ function unwrapSafeUrl(value) {
   }
   return unwrapSafeValue(value);
 }
+function booleanOrDataUrlAttribute(value) {
+  if (typeof value === "string" && value.startsWith(`data:`)) {
+    return value;
+  }
+  return booleanAttribute(value);
+}
 
 export {
   getDOM,
@@ -4663,9 +4861,9 @@ export {
 
 @angular/common/fesm2022/common.mjs:
   (**
-   * @license Angular v17.1.2
-   * (c) 2010-2022 Google LLC. https://angular.io/
+   * @license Angular v17.3.9
+   * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-GHI5UUOM.js.map
+//# sourceMappingURL=chunk-AF2DBQWG.js.map

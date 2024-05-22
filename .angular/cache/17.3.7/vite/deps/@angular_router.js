@@ -1,6 +1,6 @@
 import {
   Title
-} from "./chunk-ZYCB3AU2.js";
+} from "./chunk-5LGW5DQT.js";
 import {
   DOCUMENT,
   HashLocationStrategy,
@@ -9,7 +9,7 @@ import {
   LocationStrategy,
   PathLocationStrategy,
   ViewportScroller
-} from "./chunk-GHI5UUOM.js";
+} from "./chunk-AF2DBQWG.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   APP_INITIALIZER,
@@ -51,6 +51,7 @@ import {
   Subscription,
   Version,
   ViewContainerRef,
+  __async,
   __spreadProps,
   __spreadValues,
   afterNextRender,
@@ -112,7 +113,7 @@ import {
   ɵɵloadQuery,
   ɵɵqueryRefresh,
   ɵɵsanitizeUrlOrResourceUrl
-} from "./chunk-4TZND4QJ.js";
+} from "./chunk-BNOYPYPL.js";
 
 // node_modules/@angular/router/fesm2022/router.mjs
 var PRIMARY_OUTLET = "primary";
@@ -1807,7 +1808,25 @@ var RouterOutlet = _RouterOutlet;
     }]
   });
 })();
-var OutletInjector = class {
+var OutletInjector = class _OutletInjector {
+  /**
+   * This injector has a special handing for the `ActivatedRoute` and
+   * `ChildrenOutletContexts` tokens: it returns corresponding values for those
+   * tokens dynamically. This behavior is different from the regular injector logic,
+   * when we initialize and store a value, which is later returned for all inject
+   * requests.
+   *
+   * In some cases (e.g. when using `@defer`), this dynamic behavior requires special
+   * handling. This function allows to identify an instance of the `OutletInjector` and
+   * create an instance of it without referring to the class itself (so this logic can
+   * be invoked from the `core` package). This helps to retain dynamic behavior for the
+   * mentioned tokens.
+   *
+   * Note: it's a temporary solution and we should explore how to support this case better.
+   */
+  __ngOutletInjector(parentInjector) {
+    return new _OutletInjector(this.route, this.childContexts, parentInjector);
+  }
   constructor(route, childContexts, parent) {
     this.route = route;
     this.childContexts = childContexts;
@@ -1954,7 +1973,7 @@ _ɵEmptyOutletComponent.ɵcmp = ɵɵdefineComponent({
   features: [ɵɵStandaloneFeature],
   decls: 1,
   vars: 0,
-  template: function ɵEmptyOutletComponent_Template(rf, ctx) {
+  template: function _EmptyOutletComponent_Template(rf, ctx) {
     if (rf & 1) {
       ɵɵelement(0, "router-outlet");
     }
@@ -3349,7 +3368,7 @@ function createViewTransition(injector, from2, to) {
   return injector.get(NgZone).runOutsideAngular(() => {
     if (!document.startViewTransition || transitionOptions.skipNextTransition) {
       transitionOptions.skipNextTransition = false;
-      return Promise.resolve();
+      return new Promise((resolve) => setTimeout(resolve));
     }
     let resolveViewTransitionStarted;
     const viewTransitionStarted = new Promise((resolve) => {
@@ -3455,12 +3474,16 @@ var _NavigationTransitions = class _NavigationTransitions {
       })),
       // Using switchMap so we cancel executing navigations when a new one comes in
       switchMap((overallTransitionState) => {
-        this.currentTransition = overallTransitionState;
         let completed = false;
         let errored = false;
         return of(overallTransitionState).pipe(
-          // Store the Navigation object
-          tap((t) => {
+          switchMap((t) => {
+            if (this.navigationId > overallTransitionState.id) {
+              const cancellationReason = typeof ngDevMode === "undefined" || ngDevMode ? `Navigation ID ${overallTransitionState.id} is not equal to the current navigation id ${this.navigationId}` : "";
+              this.cancelNavigationTransition(overallTransitionState, cancellationReason, NavigationCancellationCode.SupersededByNewNavigation);
+              return EMPTY;
+            }
+            this.currentTransition = overallTransitionState;
             this.currentNavigation = {
               id: t.id,
               initialUrl: t.rawUrl,
@@ -3471,8 +3494,6 @@ var _NavigationTransitions = class _NavigationTransitions {
                 previousNavigation: null
               })
             };
-          }),
-          switchMap((t) => {
             const urlTransition = !router.navigated || this.isUpdatingInternalState() || this.isUpdatedBrowserUrl();
             const onSameUrlNavigation = t.extras.onSameUrlNavigation ?? router.onSameUrlNavigation;
             if (!urlTransition && onSameUrlNavigation !== "reload") {
@@ -3651,8 +3672,9 @@ var _NavigationTransitions = class _NavigationTransitions {
               const cancelationReason = typeof ngDevMode === "undefined" || ngDevMode ? `Navigation ID ${overallTransitionState.id} is not equal to the current navigation id ${this.navigationId}` : "";
               this.cancelNavigationTransition(overallTransitionState, cancelationReason, NavigationCancellationCode.SupersededByNewNavigation);
             }
-            if (this.currentNavigation?.id === overallTransitionState.id) {
+            if (this.currentTransition?.id === overallTransitionState.id) {
               this.currentNavigation = null;
+              this.currentTransition = null;
             }
           }),
           catchError((e) => {
@@ -4751,21 +4773,21 @@ var _RouterLinkActive = class _RouterLinkActive {
       return;
     queueMicrotask(() => {
       const hasActiveLinks = this.hasActiveLinks();
+      this.classes.forEach((c) => {
+        if (hasActiveLinks) {
+          this.renderer.addClass(this.element.nativeElement, c);
+        } else {
+          this.renderer.removeClass(this.element.nativeElement, c);
+        }
+      });
+      if (hasActiveLinks && this.ariaCurrentWhenActive !== void 0) {
+        this.renderer.setAttribute(this.element.nativeElement, "aria-current", this.ariaCurrentWhenActive.toString());
+      } else {
+        this.renderer.removeAttribute(this.element.nativeElement, "aria-current");
+      }
       if (this._isActive !== hasActiveLinks) {
         this._isActive = hasActiveLinks;
         this.cdr.markForCheck();
-        this.classes.forEach((c) => {
-          if (hasActiveLinks) {
-            this.renderer.addClass(this.element.nativeElement, c);
-          } else {
-            this.renderer.removeClass(this.element.nativeElement, c);
-          }
-        });
-        if (hasActiveLinks && this.ariaCurrentWhenActive !== void 0) {
-          this.renderer.setAttribute(this.element.nativeElement, "aria-current", this.ariaCurrentWhenActive.toString());
-        } else {
-          this.renderer.removeAttribute(this.element.nativeElement, "aria-current");
-        }
         this.isActiveChange.emit(hasActiveLinks);
       }
     });
@@ -5006,6 +5028,7 @@ var _RouterScroller = class _RouterScroller {
     this.lastSource = "imperative";
     this.restoredId = 0;
     this.store = {};
+    this.environmentInjector = inject(EnvironmentInjector);
     options.scrollPositionRestoration ||= "disabled";
     options.anchorScrolling ||= "disabled";
   }
@@ -5052,13 +5075,21 @@ var _RouterScroller = class _RouterScroller {
     });
   }
   scheduleScrollEvent(routerEvent, anchor) {
-    this.zone.runOutsideAngular(() => {
-      setTimeout(() => {
-        this.zone.run(() => {
-          this.transitions.events.next(new Scroll(routerEvent, this.lastSource === "popstate" ? this.store[this.restoredId] : null, anchor));
+    this.zone.runOutsideAngular(() => __async(this, null, function* () {
+      yield new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
         });
-      }, 0);
-    });
+        afterNextRender(() => {
+          resolve();
+        }, {
+          injector: this.environmentInjector
+        });
+      });
+      this.zone.run(() => {
+        this.transitions.events.next(new Scroll(routerEvent, this.lastSource === "popstate" ? this.store[this.restoredId] : null, anchor));
+      });
+    }));
   }
   /** @nodoc */
   ngOnDestroy() {
@@ -5494,7 +5525,7 @@ function mapToCanDeactivate(providers) {
 function mapToResolve(provider) {
   return (...params) => inject(provider).resolve(...params);
 }
-var VERSION = new Version("17.1.2");
+var VERSION = new Version("17.3.9");
 export {
   ActivatedRoute,
   ActivatedRouteSnapshot,
@@ -5577,8 +5608,8 @@ export {
 
 @angular/router/fesm2022/router.mjs:
   (**
-   * @license Angular v17.1.2
-   * (c) 2010-2022 Google LLC. https://angular.io/
+   * @license Angular v17.3.9
+   * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
