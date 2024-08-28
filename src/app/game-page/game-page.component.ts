@@ -18,7 +18,7 @@ export class GamePageComponent {
   playerOnMove = false;
 
   ngOnInit() {
-   //this.playAudio();
+   this.playAudio();
   }
 
   ngOnDestroy() {
